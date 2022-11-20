@@ -176,9 +176,9 @@ namespace gnss_comm
         std::string line;
         while(std::getline(ephem_file, line))
         {
-            if (line.find("RINEX VERSION / TYPE") != std::string::npos && line.find("3.04") == std::string::npos)
+            if (line.find("RINEX VERSION / TYPE") != std::string::npos && line.find("3.0") == std::string::npos)
             {
-                LOG(ERROR) << "Only RINEX 3.04 is supported for observation file";
+                LOG(ERROR) << "Only RINEX 3.0X is supported for observation file";
                 return;
             }
             else if (line.find("LEAP SECONDS") != std::string::npos && line.find("BDS") == std::string::npos)
@@ -304,9 +304,9 @@ namespace gnss_comm
         uint8_t sys_char = 0;
         while (std::getline(obs_file, rinex_line))
         {
-            if (rinex_line.find("RINEX VERSION / TYPE") != std::string::npos && rinex_line.find("3.04") == std::string::npos)
+            if (rinex_line.find("RINEX VERSION / TYPE") != std::string::npos && rinex_line.find("3.0") == std::string::npos)
             {
-                LOG(ERROR) << "Only RINEX 3.04 is supported for observation file";
+                LOG(ERROR) << "Only RINEX 3.0X is supported for observation file";
                 return;
             }
             else if (rinex_line.find("SYS / # / OBS TYPES") != std::string::npos)
@@ -357,9 +357,9 @@ namespace gnss_comm
 
         // check first line, mainly RINEX version
         if (!(std::getline(file, line) && line.find("RINEX VERSION")  != std::string::npos 
-                && line.find("3.04") != std::string::npos))
+                && line.find("3.0") != std::string::npos))
         {
-            LOG(ERROR) << "Only RINEX 3.04 is supported";
+            LOG(ERROR) << "Only RINEX 3.0X is supported";
             return;
         }
 
