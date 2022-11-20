@@ -347,6 +347,16 @@ namespace gnss_comm
             else if (rinex_line.find("END OF HEADER") != std::string::npos)  break;
         }
 
+        // print all fields for each system
+        for(auto & pair : sys2type)
+        {
+            std::cout << pair.first << ": ";
+            for(auto & e : pair.second){
+                std::cout << e << ", ";
+            }
+            std::cout << std::endl;
+        }
+
         while (std::getline(obs_file, rinex_line))
         {
             LOG_IF(FATAL, rinex_line.at(0) != '>') << "Invalid Observation record " << rinex_line;
