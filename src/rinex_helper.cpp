@@ -235,10 +235,34 @@ namespace gnss_comm
         std::map<double, uint32_t> freq2idx;
         std::vector<std::string> date_types = sys2type.at(sys_char);
         uint32_t line_offset = 3;
+
+        // resize meas vectors with the number of different frequencies
+        std::set<double> freq_set;
+        for (auto type : date_types)
+        {
+            std::stringstream ss;
+            ss << sys_char << type.at(1);
+            const double freq = type2freq.at(ss.str());
+            freq_set.insert(freq);
+        }
+        int freq_count = freq_set.size();
+        
+        obs->CN0.resize(freq_count);
+        obs->LLI.resize(freq_count);
+        obs->code.resize(freq_count);
+        obs->psr.resize(freq_count);
+        obs->psr_std.resize(freq_count);
+        obs->cp.resize(freq_count);
+        obs->cp_std.resize(freq_count);
+        obs->dopp.resize(freq_count);
+        obs->dopp_std.resize(freq_count);
+        obs->status.resize(freq_count);
+
         for (auto type : date_types)
         {
             std::string field_str = rinex_str.substr(line_offset, 14);
             line_offset += 14 + 2;
+            if(field_str.size() !=14) break; // necessary for some files
             if (field_str.find_first_not_of(' ') == std::string::npos)  continue;
             const double field_value = stod(field_str);
             std::stringstream ss;
@@ -268,27 +292,27 @@ namespace gnss_comm
                 LOG(FATAL) << "Unrecognized measurement type " << type.at(0);
         }
         // fill in other fields
-        uint32_t num_freqs = obs->freqs.size();
-        LOG_IF(FATAL, num_freqs < obs->CN0.size()) << "Suspicious observation field.\n";
-        std::fill_n(std::back_inserter(obs->CN0), num_freqs-obs->CN0.size(), 0);
-        LOG_IF(FATAL, num_freqs < obs->LLI.size()) << "Suspicious observation field.\n";
-        std::fill_n(std::back_inserter(obs->LLI), num_freqs-obs->LLI.size(), 0);
-        LOG_IF(FATAL, num_freqs < obs->code.size()) << "Suspicious observation field.\n";
-        std::fill_n(std::back_inserter(obs->code), num_freqs-obs->code.size(), 0);
-        LOG_IF(FATAL, num_freqs < obs->psr.size()) << "Suspicious observation field.\n";
-        std::fill_n(std::back_inserter(obs->psr), num_freqs-obs->psr.size(), 0);
-        LOG_IF(FATAL, num_freqs < obs->psr_std.size()) << "Suspicious observation field.\n";
-        std::fill_n(std::back_inserter(obs->psr_std), num_freqs-obs->psr_std.size(), 0);
-        LOG_IF(FATAL, num_freqs < obs->cp.size()) << "Suspicious observation field.\n";
-        std::fill_n(std::back_inserter(obs->cp), num_freqs-obs->cp.size(), 0);
-        LOG_IF(FATAL, num_freqs < obs->cp_std.size()) << "Suspicious observation field.\n";
-        std::fill_n(std::back_inserter(obs->cp_std), num_freqs-obs->cp_std.size(), 0);
-        LOG_IF(FATAL, num_freqs < obs->dopp.size()) << "Suspicious observation field.\n";
-        std::fill_n(std::back_inserter(obs->dopp), num_freqs-obs->dopp.size(), 0);
-        LOG_IF(FATAL, num_freqs < obs->dopp_std.size()) << "Suspicious observation field.\n";
-        std::fill_n(std::back_inserter(obs->dopp_std), num_freqs-obs->dopp_std.size(), 0);
-        LOG_IF(FATAL, num_freqs < obs->status.size()) << "Suspicious observation field.\n";
-        std::fill_n(std::back_inserter(obs->status), num_freqs-obs->status.size(), 0x0F);
+        // uint32_t num_freqs = obs->freqs.size();
+        // LOG_IF(FATAL, num_freqs < obs->CN0.size()) << "Suspicious observation field.\n";
+        // std::fill_n(std::back_inserter(obs->CN0), num_freqs-obs->CN0.size(), 0);
+        // LOG_IF(FATAL, num_freqs < obs->LLI.size()) << "Suspicious observation field.\n";
+        // std::fill_n(std::back_inserter(obs->LLI), num_freqs-obs->LLI.size(), 0);
+        // LOG_IF(FATAL, num_freqs < obs->code.size()) << "Suspicious observation field.\n";
+        // std::fill_n(std::back_inserter(obs->code), num_freqs-obs->code.size(), 0);
+        // LOG_IF(FATAL, num_freqs < obs->psr.size()) << "Suspicious observation field.\n";
+        // std::fill_n(std::back_inserter(obs->psr), num_freqs-obs->psr.size(), 0);
+        // LOG_IF(FATAL, num_freqs < obs->psr_std.size()) << "Suspicious observation field.\n";
+        // std::fill_n(std::back_inserter(obs->psr_std), num_freqs-obs->psr_std.size(), 0);
+        // LOG_IF(FATAL, num_freqs < obs->cp.size()) << "Suspicious observation field.\n";
+        // std::fill_n(std::back_inserter(obs->cp), num_freqs-obs->cp.size(), 0);
+        // LOG_IF(FATAL, num_freqs < obs->cp_std.size()) << "Suspicious observation field.\n";
+        // std::fill_n(std::back_inserter(obs->cp_std), num_freqs-obs->cp_std.size(), 0);
+        // LOG_IF(FATAL, num_freqs < obs->dopp.size()) << "Suspicious observation field.\n";
+        // std::fill_n(std::back_inserter(obs->dopp), num_freqs-obs->dopp.size(), 0);
+        // LOG_IF(FATAL, num_freqs < obs->dopp_std.size()) << "Suspicious observation field.\n";
+        // std::fill_n(std::back_inserter(obs->dopp_std), num_freqs-obs->dopp_std.size(), 0);
+        // LOG_IF(FATAL, num_freqs < obs->status.size()) << "Suspicious observation field.\n";
+        // std::fill_n(std::back_inserter(obs->status), num_freqs-obs->status.size(), 0x0F);
 
         return obs;
     }
