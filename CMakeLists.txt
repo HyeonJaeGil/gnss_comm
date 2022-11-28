@@ -42,21 +42,29 @@ catkin_package(
 )
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-find_package(Eigen3 REQUIRED)
+find_package(GTSAM REQUIRED QUIET)
+# find_package(Eigen3 REQUIRED)
 find_package(Glog REQUIRED)
 include_directories(
-  ${EIGEN3_INCLUDE_DIR}
+  # ${EIGEN3_INCLUDE_DIR}
+	${GTSAM_INCLUDE_DIR}
   ${GLOG_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/
 )
 
+link_directories(
+  include
+  ${GTSAM_LIBRARY_DIRS}
+)
+
 file(GLOB_RECURSE source_files ${PROJECT_SOURCE_DIR}/src/*.cpp)
 add_library(${PROJECT_NAME} ${source_files})
 target_include_directories(${PROJECT_NAME} PUBLIC
-  ${EIGEN3_INCLUDE_DIR}
+# ${EIGEN3_INCLUDE_DIR}
+	${GTSAM_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
   ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/
 )
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${GLOG_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${GLOG_LIBRARIES} gtsam)
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_generate_messages_cpp)
